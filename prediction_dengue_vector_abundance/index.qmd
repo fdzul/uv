@@ -1,5 +1,5 @@
 ---
-title: "Prediccion de la abundancia del vector del dengue en usando Algoritmos de Machine Learning"
+title: "Prediccion de la abundancia del vector del dengue usando Algoritmos de Machine Learning"
 format: 
   html:
       self-contained: true
