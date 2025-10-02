@@ -1,0 +1,151 @@
+---
+title: "Prediccion de la abundancia del vector del dengue en usando Algoritmos de Machine Learning"
+format: 
+  html:
+      self-contained: true
+      theme: flatly
+      code-fold: true
+      toc: true
+      number-sections: true
+title-block-banner: true
+editor: visual
+#bibliography: references.bib
+execute:
+  freeze: auto
+---
+
+
+## Objetivo General
+
+Predecir la abundancia de huevos de *Aedes aegypti* de una localidad usando Algoritmos de Machine Learning.
+
+
+
+## Antecedentes
+
+La estrategia nacional para el control del dengue y otras arbovirosis 2025-2030 basa sus estrategias de manejo integrado de los vectores en la vigilancia epidemiológica y en la vigilancia entomológica (SSA, 2025). La vigilancia entomológica en México se realiza de acuerdo con la Norma Oficial Mexicana para la Vigilancia Epidemiológica, Promoción, Prevención y Control de las Enfermedades Transmitidas por Vec-tores NOM-032-SSA2-2014 y con las guías operativas de las arbovirosis. Desde el 2009 personal técnico del Centro Nacional de Prevención y Control de Enfermedades (CENAPRECE) inicio los estudios piloto para implementar un sistema de vigilancia entomológica con ovitrampas en varios estados (Guerrero, Veracruz, Yucatán, etc.), culminando su desarrollo entre el 2011-2012 y actualmente opera en 32 entidades federativas, 284 municipios y 955 localidades. El muestreo sistemático consiste en seleccionar 1 manzana por cada 4 o 6 manzanas en zonas planas o 1 manzana por cada 2 o 3 manzanas en zonas con relieve. En cada manzana seleccionada se instalan cuatro ovitrampas (una por cada lado de la manzana) en el exterior del domicilio, semanalmente personal de vectores realiza la lectura de la ovitrampas y las captura en el módulo de Vigilancia Entomológica y Control Integral del Vector (https://geosis.mx/Aplicaciones/EntomologiayControl/Home/IndexNacional) del Subsistema Información para la Vigilancia del Dengue (https://geosis.mx/Aplicaciones/SisMV/Home/Dengue) del Sistema de Monitoreo Integral de Vectores (https://geosis.mx/aplicaciones/sismv) (Figura1).
+
+```{r blocks_ovitraps, fig.cap= "Figura 1. Muestreo de la Vigilancia entomológica con ovitrampas en la ciudad de Ticul, Yucatán"}
+#| warning: False
+#| message: False
+#| echo: true
+#| output: true
+#| out.width: "100%"
+deneggs::blocks_surveillance(locality = "Ticul",
+                             cve_edo = "31")
+```
+
+La ovitrampa utilizada en México consiste de un recipiente de plástico negro con una capacidad de un litro cubierto en su superficie interior con papel pellon (F-1600), a la cual se le incorpora agua potable hasta antes de 2 cm de su borde superior (Figura 2). Semanalmente a las ovitrampas se les retira el sustrato de ovoposición y se les cambia por un sustrato nuevo y agua. El número de huevos en la papeleta de cada ovitrampa instalada es contado y registrado. La información asociada a la papeleta (localidad, municipio, manzana, sector, fecha, colector y número de huevos) es capturado en el Módulo de Vigilancia Entomológica y Control Integral del Vector del Sistema de Monitoreo Integral de Vectores de la Secretaría de Salud Federal (http://geosis.mx/aplicaciones/sismv/). La descripción de los procesos pueden encontrarse en la guía metodológica para la vigilancia entomológica con ovitrampas (https://www.gob.mx/cms/uploads/attachment/file/943497/Gu_a_Metodol_gica_para_la_Vigilancia_Entomol_gica_con_Ovitrampas_compressed.pdf).
+
+<html>
+<head>
+```{=html}
+<style>
+.grid-container {
+  display: grid;
+  gap: 0px;
+  background-color: #FFFFFF;
+  padding: 1px;
+}
+
+.grid-item1 {
+  background-color: rgba(255, 255, 255);
+  text-align: center;
+  padding: 0px;
+  font-size: 1px;
+}
+
+
+.grid-item2 {
+  grid-column: 1 / span 3;
+  grid-row: 3;
+}
+</style>
+```
+</head>
+<body>
+
+::: grid-container
+
+::: {.grid-item1}
+![](https://github.com/fdzul/deneggs/blob/master/IMG_6137.JPG?raw=true){width=98%}
+:::
+
+::: {.grid-item1}
+![](https://github.com/fdzul/deneggs/blob/master/IMG_6176.JPG?raw=true){width=98%}
+:::
+
+::: {.grid-item1}
+![](https://github.com/fdzul/deneggs/blob/master/IMG_6186.JPG?raw=true){width=98%}
+:::
+
+::: {.grid-item2}
+![Figura 2. Ilustración de la ovitrampa.](https://github.com/fdzul/deneggs/blob/master/IMG_6150.JPG?raw=true){width=98%}
+:::
+
+
+:::
+
+</body>
+</html>
+
+
+## Descripción del Problema
+
+El sistema de vigilancia entomológica con ovitrampas en México genera datos del número de huevos por semana en las localidades prioritarias. En la figura 3 se proporciona un mapa de la abundancia de huevos en la ciudad de Ticul, Yucatán. En el mapa el radio de los círculos representan la abundancias de huevos por ovitrampa. El programa de vectores no puede censar de todas manzanas y casas de una ciudad para generar los datos entomológicos, y como se puede apreciar en el mapa existen áreas sin muestrear donde se desconocen las abundancias del vector. Dentro del campo de conocimiento de la estadística espacial este problema recae en el área de los análisis geoestadísticos, cuyo objetivo es predecir la variable de interés (numero de huevos) en las área no muestreadas. **El desafió consiste en generar mapas predictivos de toda la superficie de una ciudad usando análisis geoestadísticos con algoritmos de machine learning**.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.cap="Figura 3. Abundancia de huevos en la ciudad de Ticul, Yucatán"}
+# Paso 1. definir la ruta de la carpeta
+path_vect <- "/Users/fdzul/Library/CloudStorage/Dropbox/CENAPRECE/2024/31_yucatan"
+path_coord <- paste(path_vect, "DescargaOvitrampasMesFco.txt", sep = "/")
+
+# Paso 2. definir el resto de argumentos y aplicar la función
+deneggs::eggs_risk(path_vect = path_vect,
+                   path_coord = path_coord,
+                   weeks = 30,
+                   locality = "Ticul",
+                   risk = FALSE)
+```
+
+## Descripción de la base de datos
+
+### Input
+
+La base de datos tiene cuatro variables, las coordenadas geográficas (x, y), la semana y la variable de interés (eggs). Las coordenadas geográficas tienen sistema de referencia (CRC) con código EPSG 4326.
+
+### Covariables
+
+  - variables climáticas
+  - variables ambientales
+  - variables antropogénicas
+  - variables sociodemográficas
+  
+### output
+
+Predición del número de huevos
+
+
+## Bases 
+
+### Participantes
+
+Estudiantes de licenciatura o posgrado de la Facultad de Estadística e Informática
+Estudiantes de licenciatura o posgrado de la Facultad de Economía
+
+
+### Software
+
+Los análisis se podran implementar en R, Python, Julia, o una combinación de ellos.
+
+### Premio
+
+Primer lugar 10,000.0
+Segundo lugar 5,000.0
+
+### Criterios
+
+1. Publicar los códigos en github.
+2. Reproducibilidad.
+
+
