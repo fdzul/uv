@@ -1,5 +1,5 @@
 ---
-title: "Prediccion de la abundancia del vector del dengue usando Algoritmos de Machine Learning"
+title: "Predicción de la abundancia del vector del dengue usando Algoritmos de Machine Learning"
 format: 
   html:
       self-contained: true
@@ -130,8 +130,9 @@ Predición del número de huevos
 
 ### Participantes
 
-Estudiantes de licenciatura o posgrado de la Facultad de Estadística e Informática
-Estudiantes de licenciatura o posgrado de la Facultad de Economía
+- Estudiantes de licenciatura o posgrado de la Facultad de Estadística e Informática
+
+-Estudiantes de licenciatura o posgrado de la Facultad de Economía
 
 
 ### Software
@@ -148,7 +149,8 @@ Los análisis se podran implementar en R, Python, Julia, o una combinación de e
 
 1. Publicar los códigos en github.
 2. Reproducibilidad.
-3. 
+3. Eficiencia del algoritmo.
+4. Claridad del código.
 
 ### Contacto
 
