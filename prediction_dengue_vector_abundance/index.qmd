@@ -132,7 +132,7 @@ Predición del número de huevos
 
 - Estudiantes de licenciatura o posgrado de la Facultad de Estadística e Informática
 
--Estudiantes de licenciatura o posgrado de la Facultad de Economía
+- Estudiantes de licenciatura o posgrado de la Facultad de Economía
 
 
 ### Software
