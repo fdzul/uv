@@ -114,7 +114,7 @@ deneggs::eggs_risk(path_vect = path_vect,
 
 La base de datos tiene cuatro variables, las coordenadas geográficas (x, y), la semana y la variable de interés (eggs). Las coordenadas geográficas tienen un sistema de referencia (CRS) con código EPSG 4326.
 
-```{r}
+```{r echo=FALSE}
 load("~/Library/CloudStorage/Dropbox/dataset/automatic_read_ovitraps/eggs_data.RData")
 gtExtras::gt_plt_summary(eggs_data)
 ```
